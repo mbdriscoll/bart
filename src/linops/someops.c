@@ -22,7 +22,7 @@
 #include "num/conv.h"
 #include "num/ops.h"
 #include "num/iovec.h"
-#include "num/lapack.h"
+#include "num/blas.h"
 
 #include "linops/linop.h"
 
@@ -264,7 +264,6 @@ static bool cgemm_forward_standard(const struct operator_matrix_s* data)
 	//debug_printf(DP_DEBUG1, "use_cgemm = %d, dsum = %d, csum = %d\n", use_cgemm, dsum, csum);
 
 	return use_cgemm;
-
 }
 
 
@@ -283,7 +282,10 @@ static void linop_matrix_apply(const void* _data, complex float* dst, const comp
 
 		long L = md_calc_size(data->T_dim, data->domain_iovec->dims);
 
-		cgemm_sameplace('N', 'T', L, data->T, data->K, &(complex float){1.}, (const complex float (*) [])src, L, (const complex float (*) [])data->mat, data->T, &(complex float){0.}, (complex float (*) [])dst, L);
+		blas_cgemm('N', 'T', L, data->T, data->K, 1.,
+				(const complex float (*)[])src, L,
+				(const complex float (*)[])data->mat,
+				data->T, 0., (complex float (*)[])dst, L);
 
 	} else {
 
@@ -306,7 +308,10 @@ static void linop_matrix_apply_adjoint(const void* _data, complex float* dst, co
 
 		long L = md_calc_size(data->T_dim, data->domain_iovec->dims);
 
-		cgemm_sameplace('N', 'N', L, data->K, data->T, &(complex float){1.}, (const complex float (*) [])src, L, (const complex float (*) [])data->mat_conj, data->T, &(complex float){0.}, (complex float (*) [])dst, L);
+		blas_cgemm('N', 'N', L, data->K, data->T, 1.,
+				(const complex float (*)[])src, L,
+				(const complex float (*)[])data->mat_conj,
+				data->T, 0., (complex float (*)[])dst, L);
 
 	} else {
 
@@ -346,8 +351,10 @@ static void linop_matrix_apply_normal(const void* _data, complex float* dst, con
 
 		long L = md_calc_size(data->T_dim, data->domain_iovec->dims);
 
-		cgemm_sameplace('N', 'T', L, data->K, data->K, &(complex float){1.}, (const complex float (*) [])src, L, (const complex float (*) [])data->mat_gram, data->K, &(complex float){0.}, (complex float (*) [])dst, L);
-
+		blas_cgemm('N', 'T', L, data->K, data->K, 1.,
+				(const complex float (*)[])src, L,
+				(const complex float (*)[])data->mat_gram,
+				data->K, 0., (complex float (*)[])dst, L);
 	}
 
 }
