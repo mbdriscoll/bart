@@ -83,7 +83,7 @@ const struct operator_p_s* lrthresh_create(const long dims_lev[DIMS], bool rands
 {
 	struct lrthresh_data_s* data = lrthresh_create_data(dims_lev, randshift, mflags, blkdims, lambda, noise, remove_mean, use_gpu);
 
-	return operator_p_create(DIMS, dims_lev, DIMS, dims_lev, &data->base, lrthresh_apply, lrthresh_free_data);
+	return operator_p_create(DIMS, dims_lev, DIMS, dims_lev, &data->base, lrthresh_apply, lrthresh_free_data, "lrthresh");
 }
 
 

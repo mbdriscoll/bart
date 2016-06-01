@@ -85,7 +85,7 @@ const struct operator_s* lsqr2_create(const struct lsqr_conf* conf,
 	data->model_op = linop_clone(model_op);
 	data->size = 2 * md_calc_size(iov->N, iov->dims);	// FIXME: assume complex
 
-	const struct operator_s* normaleq_op = operator_create(iov->N, iov->dims, iov->N, iov->dims, &PTR_PASS(data)->base, normaleq_l2_apply, normaleq_del);
+	const struct operator_s* normaleq_op = operator_create(iov->N, iov->dims, iov->N, iov->dims, &PTR_PASS(data)->base, normaleq_l2_apply, normaleq_del, "normaleq");
 	const struct operator_s* adjoint = operator_ref(model_op->adjoint);
 
 	if (NULL != precond_op) {
@@ -152,7 +152,7 @@ void lsqr2(unsigned int N, const struct lsqr_conf* conf,
 	// -----------------------------------------------------------
 	// run recon
 
-	const struct operator_s* normaleq_op = operator_create(N, x_dims, N, x_dims, &data.base, normaleq_l2_apply, NULL);
+	const struct operator_s* normaleq_op = operator_create(N, x_dims, N, x_dims, &data.base, normaleq_l2_apply, NULL, "normaleq");
 
 	if (NULL != precond_op) {
 

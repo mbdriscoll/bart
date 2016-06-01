@@ -322,7 +322,7 @@ extern const struct linop_s* finite_diff_init(unsigned int D, const long dim[D],
 	data->tmp2 = md_alloc(D, data->dims, CFL_SIZE);
 #endif
 
-	return linop_create(D, dim, D, dim, &data->base, fdiff_apply, fdiff_apply_adjoint, NULL, cumsum_apply, finite_diff_del);
+	return linop_create(D, dim, D, dim, &data->base, fdiff_apply, fdiff_apply_adjoint, NULL, cumsum_apply, finite_diff_del, "finite_diff");
 }
 
 
@@ -666,7 +666,7 @@ const struct linop_s* zfinitediff_init(unsigned int D, const long dims[D], long 
 
 	return linop_create(D, data->dims_adj, D, data->dims_in, &data->base,
 			zfinitediff_apply, zfinitediff_adjoint,
-			zfinitediff_normal, NULL, zfinitediff_del);
+			zfinitediff_normal, NULL, zfinitediff_del, "zfinite_diff");
 }
 
 

@@ -72,7 +72,7 @@ const struct linop_s* ufft_create(const long ksp_dims[DIMS], const long pat_dims
 
 	// Create operator interface
 	return linop_create(DIMS, data->ksp_dims, DIMS, data->ksp_dims, &data->base,
-		ufft_apply, ufft_apply_adjoint, ufft_apply_normal, ufft_apply_pinverse, ufft_free_data);
+		ufft_apply, ufft_apply_adjoint, ufft_apply_normal, ufft_apply_pinverse, ufft_free_data, "ufft");
 }
 
 

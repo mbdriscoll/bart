@@ -150,6 +150,6 @@ struct linop_s* grad_init(long N, const long dims[N], unsigned int flags)
 	md_copy_dims(N, data->dims, dims);
 	data->dims[N] = bitcount(flags);
 	
-	return linop_create(N + 1, data->dims, N, dims, &/*PTR_PASS*/(data)->base, grad_op_apply, grad_op_adjoint, grad_op_normal, NULL, grad_op_free);
+	return linop_create(N + 1, data->dims, N, dims, &/*PTR_PASS*/(data)->base, grad_op_apply, grad_op_adjoint, grad_op_normal, NULL, grad_op_free, "grad");
 }
 

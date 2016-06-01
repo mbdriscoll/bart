@@ -296,7 +296,7 @@ const struct operator_s* fft_create2(unsigned int D, const long dimensions[D], u
 		plan->cuplan = fft_cuda_plan(D, dimensions, flags, ostrides, istrides, backwards);
 #endif
 
-	return operator_create2(D, dimensions, ostrides, D, dimensions, istrides, &PTR_PASS(plan)->base, fft_apply, fft_free_plan);
+	return operator_create2(D, dimensions, ostrides, D, dimensions, istrides, &PTR_PASS(plan)->base, fft_apply, fft_free_plan, "fft");
 }
 
 const struct operator_s* fft_create(unsigned int D, const long dimensions[D], unsigned long flags, complex float* dst, const complex float* src, bool backwards)

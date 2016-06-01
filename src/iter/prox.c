@@ -129,7 +129,7 @@ const struct operator_p_s* prox_normaleq_create(const struct linop_s* op, const 
 
 	return operator_p_create(linop_domain(op)->N, linop_domain(op)->dims, 
 			linop_domain(op)->N, linop_domain(op)->dims, 
-			&PTR_PASS(pdata)->base, prox_normaleq_apply, prox_normaleq_del);
+			&PTR_PASS(pdata)->base, prox_normaleq_apply, prox_normaleq_del, "prox_normaleq");
 }
 
 
@@ -193,7 +193,7 @@ const struct operator_p_s* prox_leastsquares_create(unsigned int N, const long d
 	pdata->lambda = lambda;
 	pdata->size = md_calc_size(N, dims) * 2;
 
-	return operator_p_create(N, dims, N, dims, &PTR_PASS(pdata)->base, prox_leastsquares_apply, prox_leastsquares_del);
+	return operator_p_create(N, dims, N, dims, &PTR_PASS(pdata)->base, prox_leastsquares_apply, prox_leastsquares_del, "prox_leastsquares");
 }
 
 
@@ -255,7 +255,7 @@ const struct operator_p_s* prox_l2norm_create(unsigned int N, const long dims[N]
 	pdata->lambda = lambda;
 	pdata->size = md_calc_size(N, dims) * 2;
 
-	return operator_p_create(N, dims, N, dims, &PTR_PASS(pdata)->base, prox_l2norm_apply, prox_l2norm_del);
+	return operator_p_create(N, dims, N, dims, &PTR_PASS(pdata)->base, prox_l2norm_apply, prox_l2norm_del, "prox_l2norm");
 }
 
 
@@ -322,7 +322,7 @@ const struct operator_p_s* prox_l2ball_create(unsigned int N, const long dims[N]
 	pdata->eps = eps;
 	pdata->size = md_calc_size(N, dims) * 2;
 
-	return operator_p_create(N, dims, N, dims, &PTR_PASS(pdata)->base, prox_l2ball_apply, prox_l2ball_del);
+	return operator_p_create(N, dims, N, dims, &PTR_PASS(pdata)->base, prox_l2ball_apply, prox_l2ball_del, "prox_l2ball");
 }
 
 
@@ -426,7 +426,7 @@ const struct operator_p_s* prox_zero_create(unsigned int N, const long dims[N])
 
 	pdata->size = md_calc_size(N, dims) * 2;
 
-	return operator_p_create(N, dims, N, dims, &PTR_PASS(pdata)->base, prox_zero_apply, prox_zero_del);
+	return operator_p_create(N, dims, N, dims, &PTR_PASS(pdata)->base, prox_zero_apply, prox_zero_del, "prox_zero");
 }
 
 
@@ -486,7 +486,7 @@ const struct operator_p_s* prox_lineq_create(const struct linop_s* op, const com
 
 	pdata->tmp = md_alloc_sameplace(N, dims, CFL_SIZE, y);
 
-	return operator_p_create(N, dims, N, dims, &PTR_PASS(pdata)->base, prox_lineq_apply, prox_lineq_del);
+	return operator_p_create(N, dims, N, dims, &PTR_PASS(pdata)->base, prox_lineq_apply, prox_lineq_del, "prox_lineq");
 }
 
 
@@ -536,7 +536,7 @@ static const struct operator_p_s* prox_ineq_create(unsigned int N, const long di
 	pdata->b = (const float*)b;
 	pdata->positive = positive;
 
-	return operator_p_create(N, dims, N, dims, &PTR_PASS(pdata)->base, prox_ineq_apply, prox_ineq_del);
+	return operator_p_create(N, dims, N, dims, &PTR_PASS(pdata)->base, prox_ineq_apply, prox_ineq_del, "prox_ineq");
 }
 
 
@@ -586,5 +586,5 @@ const struct operator_p_s* prox_rvc_create(unsigned int N, const long dims[N])
 	PTR_ALLOC(struct prox_rvc_data, pdata);
 
 	pdata->size = md_calc_size(N, dims);
-	return operator_p_create(N, dims, N, dims, &PTR_PASS(pdata)->base, prox_rvc_apply, prox_rvc_del);
+	return operator_p_create(N, dims, N, dims, &PTR_PASS(pdata)->base, prox_rvc_apply, prox_rvc_del, "prox_rvc");
 }

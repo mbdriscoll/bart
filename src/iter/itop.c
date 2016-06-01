@@ -104,7 +104,7 @@ const struct operator_s* itop_create(	italgo_fun2_t italgo, iter_conf* iconf,
 			data->prox_linops[i] = linop_clone(prox_linops[i]);
 	}
 
-	return operator_create(iov->N, iov->dims, iov->N, iov->dims, &PTR_PASS(data)->base, itop_apply, itop_del);
+	return operator_create(iov->N, iov->dims, iov->N, iov->dims, &PTR_PASS(data)->base, itop_apply, itop_del, "itop");
 }
 
 

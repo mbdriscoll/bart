@@ -56,7 +56,7 @@ struct linop_s* sampling_create(const long dims[DIMS], const long pat_dims[DIMS]
 
 	data->pattern = pattern;
 
-	return linop_create(DIMS, data->dims, DIMS, data->dims, &data->base, sampling_apply, sampling_apply, sampling_apply, NULL, sampling_free);
+	return linop_create(DIMS, data->dims, DIMS, data->dims, &data->base, sampling_apply, sampling_apply, sampling_apply, NULL, sampling_free, "sampling");
 }
 
 

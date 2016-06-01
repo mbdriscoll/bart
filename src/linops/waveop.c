@@ -85,7 +85,7 @@ struct linop_s* wavelet3_create(unsigned int N, unsigned int flags, const long d
 	long ostr[N];
 	md_calc_strides(N, ostr, odims, CFL_SIZE);
 
-	return linop_create2(N, odims, ostr, N, dims, istr, &data->base, wavelet_forward, wavelet_adjoint, NULL, NULL, wavelet_del);
+	return linop_create2(N, odims, ostr, N, dims, istr, &data->base, wavelet_forward, wavelet_adjoint, NULL, NULL, wavelet_del, "wavelet3");
 }
 
 

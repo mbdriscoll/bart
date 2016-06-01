@@ -39,6 +39,7 @@ endif
 ifeq ($(BUILDTYPE), MacOSX)
 	MACPORTS?=1
 endif
+MACPORTS=0
 
 ARFLAGS = r
 
@@ -70,7 +71,7 @@ CFLAGS ?= $(OPT) -Wmissing-prototypes
 CXXFLAGS ?= $(OPT)
 
 ifeq ($(BUILDTYPE), MacOSX)
-	CC ?= gcc-mp-4.7
+	CC ?= gcc-4.9
 else
 	CC ?= gcc
 	# for symbols in backtraces
@@ -107,7 +108,7 @@ ACML_BASE ?= /usr/local/acml/acml4.4.0/gfortran64_mp/
 ifneq ($(BUILDTYPE), MacOSX)
 FFTW_BASE ?= /usr/
 else
-FFTW_BASE ?= /opt/local/
+FFTW_BASE ?= /usr/local/
 endif
 
 

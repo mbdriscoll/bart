@@ -33,7 +33,15 @@
 #define FL_SIZE sizeof(float)
 #endif
 
+// for profiling library
+#include "omp.h"
+#include "stdio.h"
+#define PUSH(key, name) printf("start op %s %s %f\n", key, name, omp_get_wtime());
+#define POP(key, name)  printf("end   op %s %s %f\n", key, name, omp_get_wtime());
+
 struct operator_s {
+
+    char* name;
 
 	unsigned int N;
 	const struct iovec_s** domain;
@@ -52,7 +60,8 @@ struct operator_s {
  */
 const struct operator_s* operator_generic_create2(unsigned int N, const unsigned int D[N],
 			const long* dims[N], const long* strs[N],
-			operator_data_t* data, operator_fun_t apply, operator_del_t del)
+			operator_data_t* data, operator_fun_t apply, operator_del_t del,
+            char* name)
 {
 	PTR_ALLOC(struct operator_s, op);
 	PTR_ALLOC(const struct iovec_s*[N], dom);
@@ -60,6 +69,7 @@ const struct operator_s* operator_generic_create2(unsigned int N, const unsigned
 	for (unsigned int i = 0; i < N; i++)
 		(*dom)[i] = iovec_create2(D[i], dims[i], strs[i], CFL_SIZE);
 
+    op->name = name;
 	op->N = N;
 	op->domain = *PTR_PASS(dom);
 	op->data = data;
@@ -77,14 +87,15 @@ const struct operator_s* operator_generic_create2(unsigned int N, const unsigned
  * Create an operator (without strides)
  */
 const struct operator_s* operator_generic_create(unsigned int N, const unsigned int D[N],
-			const long* dims[N], operator_data_t* data, operator_fun_t apply, operator_del_t del)
+			const long* dims[N], operator_data_t* data, operator_fun_t apply, operator_del_t del,
+            char* name)
 {
 	const long* strs[N];
 
 	for (unsigned int i = 0; i < N; i++)
 		strs[i] = MD_STRIDES(D[i], dims[i], CFL_SIZE);
 
-	return operator_generic_create2(N, D, dims, strs, data, apply, del);
+	return operator_generic_create2(N, D, dims, strs, data, apply, del, name);
 }
 
 
@@ -94,10 +105,11 @@ const struct operator_s* operator_generic_create(unsigned int N, const unsigned 
  */
 const struct operator_s* operator_create2(unsigned int ON, const long out_dims[ON], const long out_strs[ON],
 			unsigned int IN, const long in_dims[IN], const long in_strs[IN],
-			operator_data_t* data, operator_fun_t apply, operator_del_t del)
+			operator_data_t* data, operator_fun_t apply, operator_del_t del,
+            char* name)
 {
 	return operator_generic_create2(2, (unsigned int[2]){ ON, IN }, (const long* [2]){ out_dims, in_dims },
-			(const long* [2]){ out_strs, in_strs }, data, apply, del);
+			(const long* [2]){ out_strs, in_strs }, data, apply, del, name);
 }
 
 /**
@@ -113,11 +125,12 @@ const struct operator_s* operator_create2(unsigned int ON, const long out_dims[O
  */
 const struct operator_s* operator_create(unsigned int ON, const long out_dims[ON], 
 		unsigned int IN, const long in_dims[IN],
-		operator_data_t* data, operator_fun_t apply, operator_del_t del)
+		operator_data_t* data, operator_fun_t apply, operator_del_t del,
+        char* name)
 {
 	return operator_create2(ON, out_dims, MD_STRIDES(ON, out_dims, CFL_SIZE),
 				IN, in_dims, MD_STRIDES(IN, in_dims, CFL_SIZE),
-				data, apply, del);
+				data, apply, del, name);
 }
 
 
@@ -276,7 +289,9 @@ static void op_p_apply(const operator_data_t* _data, unsigned int N, void* args[
 {
 	const struct op_p_data_s* data = CONTAINER_OF(_data, const struct op_p_data_s, base);
 	assert(3 == N);
+    PUSH("apply", "dataname");
 	data->apply(data->data, *((float*)args[0]), args[1], args[2]);
+    POP("apply", "dataname");
 }
 
 static void op_p_del(const operator_data_t* _data)
@@ -297,7 +312,8 @@ operator_data_t* operator_p_get_data(const struct operator_p_s* x)
  */
 const struct operator_p_s* operator_p_create2(unsigned int ON, const long out_dims[ON], const long out_strs[ON], 
 		unsigned int IN, const long in_dims[IN], const long in_strs[IN],
-		operator_data_t* data, operator_p_fun_t apply, operator_del_t del)
+		operator_data_t* data, operator_p_fun_t apply, operator_del_t del,
+        char* name)
 {
 	PTR_ALLOC(struct operator_p_s, o);
 	PTR_ALLOC(struct op_p_data_s, op);
@@ -312,6 +328,7 @@ const struct operator_p_s* operator_p_create2(unsigned int ON, const long out_di
 	(*dom)[1] = iovec_create2(ON, out_dims, out_strs, CFL_SIZE);
 	(*dom)[2] = iovec_create2(IN, in_dims, in_strs, CFL_SIZE);
 
+    o->op.name = name;
 	o->op.N = 3;
 	o->op.domain = *PTR_PASS(dom);
 	o->op.data = &PTR_PASS(op)->base;
@@ -340,11 +357,12 @@ const struct operator_p_s* operator_p_create2(unsigned int ON, const long out_di
  */
 const struct operator_p_s* operator_p_create(unsigned int ON, const long out_dims[ON], 
 		unsigned int IN, const long in_dims[IN], 
-		operator_data_t* data, operator_p_fun_t apply, operator_del_t del)
+		operator_data_t* data, operator_p_fun_t apply, operator_del_t del,
+        char* name)
 {
 	return operator_p_create2(ON, out_dims, MD_STRIDES(ON, out_dims, CFL_SIZE),
 				IN, in_dims, MD_STRIDES(IN, in_dims, CFL_SIZE),
-				data, apply, del);
+				data, apply, del, name);
 }
 
 
@@ -381,7 +399,7 @@ const struct operator_s* operator_identity_create2(unsigned int N, const long di
         data->domain = iovec_create2(N, dims, istrs, CFL_SIZE);
         data->codomain = iovec_create2(N, dims, ostrs, CFL_SIZE);
 
-        return operator_create2(N, dims, ostrs, N, dims, istrs, &data->base, identity_apply, identity_free);
+        return operator_create2(N, dims, ostrs, N, dims, istrs, &data->base, identity_apply, identity_free, "identity2");
 }
 
 /**
@@ -462,7 +480,7 @@ const struct operator_s* operator_chain(const struct operator_s* a, const struct
 
 	const struct iovec_s* dom = a->domain[1];
 	const struct iovec_s* cod = b->domain[0];
-	return operator_create2(cod->N, cod->dims, cod->strs, dom->N, dom->dims, dom->strs, &PTR_PASS(c)->base, chain_apply, chain_free);
+	return operator_create2(cod->N, cod->dims, cod->strs, dom->N, dom->dims, dom->strs, &PTR_PASS(c)->base, chain_apply, chain_free, "chain");
 }
 
 
@@ -568,14 +586,16 @@ const struct operator_s* operator_stack(unsigned int D, unsigned int E, const st
 	c->dst_offset = cod_strs[D];
 	c->src_offset = dom_strs[D];
 
-	return operator_create2(cod_N, cod_dims, cod_strs, dom_N, dom_dims, dom_strs, &c->base, stack_apply, stack_free);
+	return operator_create2(cod_N, cod_dims, cod_strs, dom_N, dom_dims, dom_strs, &c->base, stack_apply, stack_free, "stack");
 }
 
 
 
 void operator_generic_apply_unchecked(const struct operator_s* op, unsigned int N, void* args[N])
 {
+    PUSH("generic_apply_unchecked", op->name);
 	op->apply((void*)op->data, N, args);
+    POP("generic_apply_unchecked", op->name);
 }
 
 
@@ -620,7 +640,9 @@ void operator_p_apply(const struct operator_p_s* op, float mu, unsigned int ON, 
 
 void operator_p_apply_unchecked(const struct operator_p_s* op, float mu, complex float* dst, const complex float* src)
 {
+    PUSH("p_apply_unchecked", op->op.name);
 	op->op.apply(op->op.data, 3, (void*[3]){ &mu, (void*)dst, (void*)src });
+    POP("p_apply_unchecked", op->op.name);
 }
 
 
@@ -746,7 +768,7 @@ const struct operator_s* (operator_loop2)(unsigned int N, const unsigned int D,
 	data->dims = *dims2;
 	data->strs = *strs2;
 
-	return operator_generic_create2(N, D2, *dims2, *strs2, &data->base, op_loop_fun, op_loop_del);
+	return operator_generic_create2(N, D2, *dims2, *strs2, &data->base, op_loop_fun, op_loop_del, "loop");
 }
 
 const struct operator_s* operator_loop(unsigned int D, const long dims[D], const struct operator_s* op)
@@ -826,7 +848,7 @@ const struct operator_s* operator_gpu_wrapper(const struct operator_s* op)
 	PTR_ALLOC(struct gpu_data_s, data);
 	data->op = op;
 
-	return operator_generic_create2(N, D, dims, strs, &data->base, gpuwrp_fun, gpuwrp_del);
+	return operator_generic_create2(N, D, dims, strs, &data->base, gpuwrp_fun, gpuwrp_del, "gpuwrap");
 }
 #endif
 

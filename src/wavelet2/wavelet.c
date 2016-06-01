@@ -274,7 +274,7 @@ const struct linop_s* wavelet_create(int numdims, const long imSize[numdims], un
 	coeff_dims[1] = 1;
 	coeff_dims[2] = 1;
 
-	return linop_create(numdims, coeff_dims, numdims, imSize, &data->base, wavelet_forward, wavelet_inverse, wavelet_normal, NULL, wavelet_del);
+	return linop_create(numdims, coeff_dims, numdims, imSize, &data->base, wavelet_forward, wavelet_inverse, wavelet_normal, NULL, wavelet_del, "wavelet");
 }
 
 
@@ -416,7 +416,7 @@ const struct operator_p_s* prox_wavethresh_create(int numdims, const long imSize
 	data->plan->randshift = randshift;
 	data->plan->lambda = lambda;
 
-	return operator_p_create(numdims, imSize, numdims, imSize, &PTR_PASS(data)->base, wavelet_thresh, wavelet_prox_del);
+	return operator_p_create(numdims, imSize, numdims, imSize, &PTR_PASS(data)->base, wavelet_thresh, wavelet_prox_del, "prox_wavethresh");
 
 }
 

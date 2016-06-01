@@ -92,7 +92,7 @@ static struct linop_s* linop_gdiag_create(unsigned int N, const long dims[N], un
 	data->dstrs = *PTR_PASS(dstrs);
 	data->diag = diag;	// make a copy?
 
-	return linop_create(N, dims, N, dims, &PTR_PASS(data)->base, cdiag_apply, cdiag_adjoint, cdiag_normal, NULL, cdiag_free);
+	return linop_create(N, dims, N, dims, &PTR_PASS(data)->base, cdiag_apply, cdiag_adjoint, cdiag_normal, NULL, cdiag_free, "gdiag");
 }
 
 
@@ -160,7 +160,7 @@ struct linop_s* linop_identity_create(unsigned int N, const long dims[N])
 
 	data->domain = iovec_create(N, dims, CFL_SIZE);
 
-	return linop_create(N, dims, N, dims, &PTR_PASS(data)->base, identity_apply, identity_apply, identity_apply, NULL, identity_free);
+	return linop_create(N, dims, N, dims, &PTR_PASS(data)->base, identity_apply, identity_apply, identity_apply, NULL, identity_free, "identity");
 }
 
 
@@ -230,7 +230,7 @@ struct linop_s* linop_resize_create(unsigned int N, const long out_dims[N], cons
 	md_copy_dims(N, (long*)data->out_dims, out_dims);
 	md_copy_dims(N, (long*)data->in_dims, in_dims);
 
-	return linop_create(N, out_dims, N, in_dims, &PTR_PASS(data)->base, resize_forward, resize_adjoint, resize_normal, NULL, resize_free);
+	return linop_create(N, out_dims, N, in_dims, &PTR_PASS(data)->base, resize_forward, resize_adjoint, resize_normal, NULL, resize_free, "resize");
 }
 
 
@@ -567,7 +567,7 @@ struct linop_s* linop_matrix_altcreate(unsigned int N, const long out_dims[N], c
 	data->domain_iovec = iovec_create(N, in_dims, CFL_SIZE);
 	data->codomain_iovec = iovec_create(N, out_dims, CFL_SIZE);
 
-	return linop_create(N, out_dims, N, in_dims, &PTR_PASS(data)->base, linop_matrix_apply, linop_matrix_apply_adjoint, linop_matrix_apply_normal, NULL, linop_matrix_del);
+	return linop_create(N, out_dims, N, in_dims, &PTR_PASS(data)->base, linop_matrix_apply, linop_matrix_apply_adjoint, linop_matrix_apply_normal, NULL, linop_matrix_del, "matrix");
 }
 
 
@@ -830,7 +830,7 @@ static struct linop_s* linop_fft_create_priv(int N, const long dims[N], unsigned
 	lop_fun_t apply = forward ? fft_linop_apply : fft_linop_adjoint;
 	lop_fun_t adjoint = forward ? fft_linop_adjoint : fft_linop_apply;
 
-	return linop_create(N, dims, N, dims, &PTR_PASS(data)->base, apply, adjoint, fft_linop_normal, NULL, fft_linop_free);
+	return linop_create(N, dims, N, dims, &PTR_PASS(data)->base, apply, adjoint, fft_linop_normal, NULL, fft_linop_free, "fft");
 }
 
 
@@ -953,7 +953,7 @@ struct linop_s* linop_cdf97_create(int N, const long dims[N], unsigned int flags
 	data->dims = *ndims;
 	data->flags = flags;
 
-	return linop_create(N, dims, N, dims, &data->base, linop_cdf97_apply, linop_cdf97_adjoint, linop_cdf97_normal, NULL, linop_cdf97_free);
+	return linop_create(N, dims, N, dims, &data->base, linop_cdf97_apply, linop_cdf97_adjoint, linop_cdf97_normal, NULL, linop_cdf97_free, "cdf97");
 }
 
 
@@ -1008,7 +1008,7 @@ struct linop_s* linop_conv_create(int N, unsigned int flags, enum conv_type ctyp
 
 	data->plan = conv_plan(N, flags, ctype, cmode, odims, idims, kdims, krn);
 
-	return linop_create(N, odims, N, idims, &PTR_PASS(data)->base, linop_conv_forward, linop_conv_adjoint, NULL, NULL, linop_conv_free);
+	return linop_create(N, odims, N, idims, &PTR_PASS(data)->base, linop_conv_forward, linop_conv_adjoint, NULL, NULL, linop_conv_free, "conv");
 }
 
 

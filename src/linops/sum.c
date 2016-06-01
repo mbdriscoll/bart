@@ -69,7 +69,7 @@ const struct linop_s* sum_create(const long imgd_dims[DIMS], bool use_gpu)
 	// create operator interface
 	return linop_create(DIMS, data->img_dims, DIMS, data->imgd_dims,
 			&data->base, sum_apply, sum_apply_adjoint, sum_apply_normal,
-			sum_apply_pinverse, sum_free_data);
+			sum_apply_pinverse, sum_free_data, "sum");
 }
 
 

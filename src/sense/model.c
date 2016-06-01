@@ -196,7 +196,7 @@ struct linop_s* maps_create(const long max_dims[DIMS],
 	fftscale(DIMS, data->mps_dims, FFT_FLAGS, data->sens, data->sens);
 
 	return linop_create(DIMS, data->ksp_dims, DIMS, data->img_dims, &data->base,
-			maps_apply, maps_apply_adjoint, maps_apply_normal, maps_apply_pinverse, maps_free_data);
+			maps_apply, maps_apply_adjoint, maps_apply_normal, maps_apply_pinverse, maps_free_data, "maps");
 }
 
 
@@ -222,7 +222,7 @@ struct linop_s* maps2_create(const long coilim_dims[DIMS], const long maps_dims[
 	struct maps_data* data = maps_create_data(max_dims, sens_flags, maps, use_gpu);
 
 	return linop_create(DIMS, coilim_dims, DIMS, img_dims, &data->base,
-		maps_apply, maps_apply_adjoint, maps_apply_normal, maps_apply_pinverse, maps_free_data);
+		maps_apply, maps_apply_adjoint, maps_apply_normal, maps_apply_pinverse, maps_free_data, "maps2");
 }
 
 

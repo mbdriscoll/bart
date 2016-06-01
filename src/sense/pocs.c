@@ -225,20 +225,20 @@ void pocs_recon2(italgo_fun2_t italgo, void* iconf, const struct linop_s* ops[3]
 
 
 
-	const struct operator_p_s* sense_proj = operator_p_create(DIMS, dims_ksp, DIMS, dims_ksp, &data.base, sense_proj_apply, proj_del);
+	const struct operator_p_s* sense_proj = operator_p_create(DIMS, dims_ksp, DIMS, dims_ksp, &data.base, sense_proj_apply, proj_del, "sense_proj");
 
-	const struct operator_p_s* data_consistency_proj = operator_p_create(DIMS, dims_ksp, DIMS, dims_ksp, (void*)&data, data_consistency_proj_apply, proj_del);
+	const struct operator_p_s* data_consistency_proj = operator_p_create(DIMS, dims_ksp, DIMS, dims_ksp, (void*)&data, data_consistency_proj_apply, proj_del, "dc_proj");
 	
 	const struct operator_p_s* sparsity_proj = NULL;
 	if (NULL != thresh_op)
-		sparsity_proj = operator_p_create(DIMS, dims_ksp, DIMS, dims_ksp, (void*)&data, sparsity_proj_apply, proj_del);
+		sparsity_proj = operator_p_create(DIMS, dims_ksp, DIMS, dims_ksp, (void*)&data, sparsity_proj_apply, proj_del, "sparsity_proj");
 	else
 		sparsity_proj = prox_leastsquares_create(DIMS, dims_ksp, alpha, NULL);
 
 	const struct operator_p_s* prox_ops[3] = { data_consistency_proj, sense_proj, sparsity_proj };
 	//const struct operator_p_s* prox_ops[3] = { data_consistency_proj, sense_proj, thresh_op };
 
-	const struct operator_p_s* xupdate_op = operator_p_create(DIMS, dims_ksp, DIMS, dims_ksp, (void*)&data, xupdate_apply, proj_del);
+	const struct operator_p_s* xupdate_op = operator_p_create(DIMS, dims_ksp, DIMS, dims_ksp, (void*)&data, xupdate_apply, proj_del, "xupdate");
 
 	md_clear(DIMS, dims_ksp, result, CFL_SIZE);
 	italgo(iconf, NULL, (alpha == 0.) ? 2 : 3, prox_ops, ops, xupdate_op, md_calc_size(DIMS, dims_ksp) * 2, (float*)result, NULL, NULL, (void*)&data, compute_norm);

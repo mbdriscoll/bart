@@ -200,7 +200,7 @@ int main_lrmatrix(int argc, char* argv[])
 	long size = 2 * md_calc_size(DIMS, odims);
 	struct s_data s_data = { { }, size / 2 };
 
-	const struct operator_p_s* sum_xupdate_op = operator_p_create(DIMS, odims, DIMS, odims, &s_data.base, sum_xupdate, sum_xupdate_free);
+	const struct operator_p_s* sum_xupdate_op = operator_p_create(DIMS, odims, DIMS, odims, &s_data.base, sum_xupdate, sum_xupdate_free, "sum_xupdate");
 
 
 	// do recon

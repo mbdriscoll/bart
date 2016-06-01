@@ -71,7 +71,7 @@ const struct operator_p_s* prox_dfwavelet_create(const long im_dims[DIMS], const
 {
 	struct prox_dfwavelet_data* data = prepare_prox_dfwavelet_data(im_dims, min_size, res, flow_dim, lambda, use_gpu);
         
-	return operator_p_create(DIMS, im_dims, DIMS, im_dims, &data->base, prox_dfwavelet_thresh, prox_dfwavelet_del);
+	return operator_p_create(DIMS, im_dims, DIMS, im_dims, &data->base, prox_dfwavelet_thresh, prox_dfwavelet_del, "prox_dfwavelet");
 
 }
 
@@ -215,7 +215,7 @@ const struct operator_p_s* prox_4pt_dfwavelet_create(const long im_dims[DIMS], c
 {
 	struct prox_4pt_dfwavelet_data* data = prepare_prox_4pt_dfwavelet_data(im_dims, min_size, res, flow_dim, lambda, use_gpu);
         
-	return operator_p_create(DIMS, im_dims, DIMS, im_dims, &data->base, prox_4pt_dfwavelet_thresh, prox_4pt_dfwavelet_del);
+	return operator_p_create(DIMS, im_dims, DIMS, im_dims, &data->base, prox_4pt_dfwavelet_thresh, prox_4pt_dfwavelet_del, "prox_4pt_dfwavelet");
 }
 
 struct prox_4pt_dfwavelet_data* prepare_prox_4pt_dfwavelet_data(const long im_dims[DIMS], const long min_size[3], const complex float res[3], unsigned int flow_dim, float lambda, bool use_gpu)
