@@ -16,7 +16,7 @@ def bart(nargout, cmd, *args):
         print("Usage: bart(<nargout>, <command>, <arguements...>)");
         return None
 
-    bart_path = os.environ['TOOLBOX_PATH'] + '/bart ';
+    bart_path = os.path.join( os.environ['TOOLBOX_PATH'], 'bart' )
 
     if not bart_path:
         if os.path.isfile('/usr/local/bin/bart'):
@@ -39,7 +39,8 @@ def bart(nargout, cmd, *args):
     out_str = ' '.join(outfiles)
 
     #TODO: Windows option.
-    ERR = os.system(bart_path + '/bart ' + cmd + ' ' + in_str + ' ' + out_str);
+    CMD = ' '.join([bart_path, cmd, in_str, out_str])
+    ERR = os.system(CMD)
 
     for elm in infiles:
         if os.path.isfile(elm + '.cfl'):
@@ -58,7 +59,7 @@ def bart(nargout, cmd, *args):
             os.remove(elm + '.hdr')
 
     if ERR:
-        raise Exception("Command exited with an error.")
+        raise Exception("Command exited with an error (%d):\n%s" % (ERR, CMD))
 
     if nargout == 1:
         output = output[0]

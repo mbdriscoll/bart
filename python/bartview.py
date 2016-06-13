@@ -52,7 +52,7 @@ class BartView(object):
         #matplotlib.rcParams['font.size'] = 6
 
         # Read data
-        self.cflname = sys.argv[1]
+        self.cflname = cflname
         self.im = self.readcfl(self.cflname)
         self.im_unsqueeze_shape = np.where( np.array(self.im.shape) > 1 )[0]
         self.im = self.im.squeeze()
