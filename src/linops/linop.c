@@ -24,8 +24,8 @@
 // for profiling library
 #include "omp.h"
 #include "stdio.h"
-#define PUSH(key) printf("start linop %s %s %f\n", op->name, key, omp_get_wtime());
-#define POP(key)  printf("end   linop %s %s %f\n", op->name, key, omp_get_wtime());
+#define PUSH(key) printf("s %s %f\n", key, omp_get_wtime());
+#define POP(key)  printf("e %s %f\n", key, omp_get_wtime());
 
 
 struct shared_data_s {
@@ -216,12 +216,12 @@ extern const struct linop_s* linop_clone(const struct linop_s* x)
 void linop_forward(const struct linop_s* op, unsigned int DN, const long ddims[DN], complex float* dst, 
 			unsigned int SN, const long sdims[SN], const complex float* src)
 {
-    PUSH("forward");
+    PUSH(op->name);
 
 	assert(op->forward);
 	operator_apply(op->forward, DN, ddims, dst, SN, sdims, src);
 
-    POP("forward");
+    POP(op->name);
 }
 
 
@@ -240,12 +240,12 @@ void linop_forward(const struct linop_s* op, unsigned int DN, const long ddims[D
 void linop_adjoint(const struct linop_s* op, unsigned int DN, const long ddims[DN], complex float* dst,
 			unsigned int SN, const long sdims[SN], const complex float* src)
 {
-    PUSH("adjoint");
+    PUSH(op->name);
 
 	assert(op->adjoint);
 	operator_apply(op->adjoint, DN, ddims, dst, SN, sdims, src);
 
-    POP("adjoint");
+    POP(op->name);
 }
 
 
@@ -266,7 +266,7 @@ void linop_pseudo_inv(const struct linop_s* op, float lambda,
 			unsigned int DN, const long ddims[DN], complex float* dst,
 			unsigned int SN, const long sdims[SN], const complex float* src)
 {
-    PUSH("pinv");
+    PUSH(op->name);
 
 	complex float* adj = md_alloc_sameplace(DN, ddims, CFL_SIZE, dst);
 	linop_adjoint(op, DN, ddims, adj, SN, sdims, src);
@@ -275,7 +275,7 @@ void linop_pseudo_inv(const struct linop_s* op, float lambda,
 	operator_p_apply(op->norm_inv, lambda, DN, ddims, dst, DN, ddims, adj);
 	md_free(adj);
 
-    POP("pinv");
+    POP(op->name);
 }
 
 
@@ -291,12 +291,12 @@ void linop_pseudo_inv(const struct linop_s* op, float lambda,
  */
 void linop_normal(const struct linop_s* op, unsigned int N, const long dims[N], complex float* dst, const complex float* src)
 {
-    PUSH("normal");
+    PUSH(op->name);
 
 	assert(op->normal);
 	operator_apply(op->normal, N, dims, dst, N, dims, src);
 
-    POP("normal");
+    POP(op->name);
 }
 
 
@@ -310,12 +310,12 @@ void linop_normal(const struct linop_s* op, unsigned int N, const long dims[N], 
  */
 void linop_forward_unchecked(const struct linop_s* op, complex float* dst, const complex float* src)
 {
-    PUSH("forward_unchecked");
+    PUSH(op->name);
 
 	assert(op->forward);
 	operator_apply_unchecked(op->forward, dst, src);
 
-    POP("forward_unchecked");
+    POP(op->name);
 }
 
 
@@ -329,12 +329,12 @@ void linop_forward_unchecked(const struct linop_s* op, complex float* dst, const
  */
 void linop_adjoint_unchecked(const struct linop_s* op, complex float* dst, const complex float* src)
 {
-    PUSH("adjoint_unchecked");
+    PUSH(op->name);
 
 	assert(op->adjoint);
 	operator_apply_unchecked(op->adjoint, dst, src);
 
-    POP("adjoint_unchecked");
+    POP(op->name);
 }
 
 
@@ -348,12 +348,12 @@ void linop_adjoint_unchecked(const struct linop_s* op, complex float* dst, const
  */
 void linop_normal_unchecked(const struct linop_s* op, complex float* dst, const complex float* src)
 {
-    PUSH("normal_unchecked");
+    PUSH(op->name);
 
 	assert(op->normal);
 	operator_apply_unchecked(op->normal, dst, src);
 
-    POP("normal_unchecked");
+    POP(op->name);
 }
 
 
@@ -368,11 +368,11 @@ void linop_normal_unchecked(const struct linop_s* op, complex float* dst, const 
  */
 void linop_norm_inv_unchecked(const struct linop_s* op, float lambda, complex float* dst, const complex float* src)
 {
-    printf("push %s pinv_unchecked\n", op->name);
+    PUSH(op->name);
 
 	operator_p_apply_unchecked(op->norm_inv, lambda, dst, src);
 
-    printf("pop%s pinv_unchecked\n", op->name);
+    POP(op->name);
 }
 
 

@@ -36,8 +36,8 @@
 // for profiling library
 #include "omp.h"
 #include "stdio.h"
-#define PUSH(key, name) printf("start op %s %s %f\n", key, name, omp_get_wtime());
-#define POP(key, name)  printf("end   op %s %s %f\n", key, name, omp_get_wtime());
+#define PUSH(name) printf("s %s %f\n", name, omp_get_wtime());
+#define POP(name)  printf("e %s %f\n", name, omp_get_wtime());
 
 struct operator_s {
 
@@ -289,9 +289,7 @@ static void op_p_apply(const operator_data_t* _data, unsigned int N, void* args[
 {
 	const struct op_p_data_s* data = CONTAINER_OF(_data, const struct op_p_data_s, base);
 	assert(3 == N);
-    PUSH("apply", "dataname");
 	data->apply(data->data, *((float*)args[0]), args[1], args[2]);
-    POP("apply", "dataname");
 }
 
 static void op_p_del(const operator_data_t* _data)
@@ -593,9 +591,9 @@ const struct operator_s* operator_stack(unsigned int D, unsigned int E, const st
 
 void operator_generic_apply_unchecked(const struct operator_s* op, unsigned int N, void* args[N])
 {
-    PUSH("generic_apply_unchecked", op->name);
+    PUSH(op->name);
 	op->apply((void*)op->data, N, args);
-    POP("generic_apply_unchecked", op->name);
+    POP(op->name);
 }
 
 
@@ -640,9 +638,9 @@ void operator_p_apply(const struct operator_p_s* op, float mu, unsigned int ON, 
 
 void operator_p_apply_unchecked(const struct operator_p_s* op, float mu, complex float* dst, const complex float* src)
 {
-    PUSH("p_apply_unchecked", op->op.name);
+    PUSH(op->op.name);
 	op->op.apply(op->op.data, 3, (void*[3]){ &mu, (void*)dst, (void*)src });
-    POP("p_apply_unchecked", op->op.name);
+    POP(op->op.name);
 }
 
 

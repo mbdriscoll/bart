@@ -516,6 +516,9 @@ int main_pics(int argc, char* argv[])
 	double end_time = timestamp();
 
 	debug_printf(DP_INFO, "Total Time: %f\n", end_time - start_time);
+
+    printf("PICS DONE\n");
+
 	exit(0);
 }
 
