@@ -17,6 +17,7 @@
 #include "num/sf.h"
 
 #include "misc/misc.h"
+#include "misc/profile.h"
 
 #include "grid.h"
 
@@ -139,6 +140,8 @@ static float intlookup(int n, const float table[n + 1], float x)
 
 void gridH(float os, float width, double beta, const complex float* traj, const long ksp_dims[4], complex float* dst, const long grid_dims[4], const complex float* grid)
 {
+    PUSH("interp");
+
 	long C = ksp_dims[3];
 #ifndef KB128
 	// precompute kaiser bessel table
@@ -174,11 +177,15 @@ void gridH(float os, float width, double beta, const complex float* traj, const 
 		for (int j = 0; j < C; j++)
 			dst[j * samples + i] += val[j];
 	}
+
+    POP("interp");
 }
 
 
 void grid(float os, float width, double beta, const complex float* traj, const long grid_dims[4], complex float* grid, const long ksp_dims[4], const complex float* src)
 {
+    PUSH("grid");
+
 	long C = ksp_dims[3];
 
 #ifndef	KB128
@@ -214,6 +221,8 @@ void grid(float os, float width, double beta, const complex float* traj, const l
 
 		grid_point(C, grid_dims, pos, grid, val, width, kb_size, kb_table);
 	}
+
+    POP("grid");
 }
 
 

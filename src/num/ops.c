@@ -23,6 +23,7 @@
 
 #include "misc/misc.h"
 #include "misc/debug.h"
+#include "misc/profile.h"
 
 #include "ops.h"
 
@@ -32,12 +33,6 @@
 #ifndef FL_SIZE
 #define FL_SIZE sizeof(float)
 #endif
-
-// for profiling library
-#include "omp.h"
-#include "stdio.h"
-#define PUSH(name) printf("s %s %f\n", name, omp_get_wtime());
-#define POP(name)  printf("e %s %f\n", name, omp_get_wtime());
 
 struct operator_s {
 

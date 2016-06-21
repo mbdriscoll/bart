@@ -14,6 +14,7 @@
 
 #include "misc/misc.h"
 #include "misc/debug.h"
+#include "misc/profile.h"
 
 #include "num/multind.h"
 #include "num/flpmath.h"
@@ -688,6 +689,7 @@ static void fft_linop_apply(const linop_data_t* _data, complex float* out, const
 {
 	const struct fft_linop_s* data = CONTAINER_OF(_data, const struct fft_linop_s, base);
 
+    PUSH("fftmod");
 	// fftmod + fftscale
 	if (data->center) {
 
@@ -698,18 +700,24 @@ static void fft_linop_apply(const linop_data_t* _data, complex float* out, const
 		if (in != out)
 			md_copy2(data->N, data->dims, data->strs, out, data->strs, in, CFL_SIZE);
 	}
+    POP("fftmod");
 
+    PUSH("fft");
 	operator_apply(data->frw, data->N, data->dims, out, data->N, data->dims, out);
+    POP("fft");
 
 	// fftmodk
+    PUSH("fftmod");
 	if (data->center)
 		md_zmul2(data->N, data->dims, data->strs, out, data->strs, out, data->strs, data->fftmodk_mat);
+    POP("fftmod");
 }
 
 static void fft_linop_adjoint(const linop_data_t* _data, complex float* out, const complex float* in)
 {
 	const struct fft_linop_s* data = CONTAINER_OF(_data, const struct fft_linop_s, base);
 
+    PUSH("ifftmod");
 	// fftmod
 	if (data->center) {
 
@@ -720,12 +728,17 @@ static void fft_linop_adjoint(const linop_data_t* _data, complex float* out, con
 		if (in != out)
 			md_copy2(data->N, data->dims, data->strs, out, data->strs, in, CFL_SIZE);
 	}
+    POP("ifftmod");
 
+    PUSH("ifft");
 	operator_apply(data->adj, data->N, data->dims, out, data->N, data->dims, out);
+    POP("ifft");
 
+    PUSH("ifftmod");
 	// fftmod + fftscale
 	if (data->center)
 		md_zmulc2(data->N, data->dims, data->strs, out, data->strs, out, data->strs, data->fftmod_mat);
+    POP("ifftmod");
 }
 
 static void fft_linop_free(const linop_data_t* _data)

@@ -17,15 +17,9 @@
 #include "num/ops.h"
 
 #include "misc/misc.h"
+#include "misc/profile.h"
 
 #include "linop.h"
-
-
-// for profiling library
-#include "omp.h"
-#include "stdio.h"
-#define PUSH(key) printf("s %s %f\n", key, omp_get_wtime());
-#define POP(key)  printf("e %s %f\n", key, omp_get_wtime());
 
 
 struct shared_data_s {

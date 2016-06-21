@@ -23,6 +23,7 @@
 
 #include "misc/misc.h"
 #include "misc/debug.h"
+#include "misc/profile.h"
 
 #include "wavelet.h"
 #include "wavelet_impl.h"
@@ -422,6 +423,8 @@ const struct operator_p_s* prox_wavethresh_create(int numdims, const long imSize
 
 void fwt2_cpu(struct wavelet_plan_s* plan, data_t* coeff, data_t* inImage)
 {
+    PUSH("fwt2");
+
 	circshift(plan,inImage);
 	data_t* origInImage = inImage;
 	data_t* HxLy = coeff + plan->waveSizes_tr[0]*plan->waveSizes_tr[1];
@@ -468,10 +471,14 @@ void fwt2_cpu(struct wavelet_plan_s* plan, data_t* coeff, data_t* inImage)
 
 	memcpy(coeff, inImage, plan->waveSizes_tr[0]*plan->waveSizes_tr[1]*sizeof(data_t));
 	circunshift(plan,origInImage);
+
+    POP("fwt2");
 }
 
 void iwt2_cpu(struct wavelet_plan_s* plan, data_t *outImage, const data_t *coeff)
 {
+    PUSH("iwt2");
+
 	// Workspace dimensions
 	int dxWork = plan->waveSizes_tr[0 + 2*plan->numLevels_tr]*2-1 + plan->filterLen-1;
 	int dyWork = plan->waveSizes_tr[1 + 2*plan->numLevels_tr]*2-1 + plan->filterLen-1;
@@ -529,6 +536,8 @@ void iwt2_cpu(struct wavelet_plan_s* plan, data_t *outImage, const data_t *coeff
 		HxLy += 3*blockSize;
 	}
 	circunshift(plan,outImage);
+
+    POP("iwt2");
 }
 
 void wavthresh2_cpu(struct wavelet_plan_s* plan, data_t* outImage, data_t* inImage, scalar_t thresh)
@@ -544,6 +553,8 @@ void wavthresh2_cpu(struct wavelet_plan_s* plan, data_t* outImage, data_t* inIma
 
 void fwt3_cpu(struct wavelet_plan_s* plan, data_t* coeff, data_t* inImage)
 {
+    PUSH("fwt3");
+
 	circshift(plan,inImage);
 	data_t* origInImage = inImage;
 	data_t* HxLyLz = coeff + plan->waveSizes_tr[0]*plan->waveSizes_tr[1]*plan->waveSizes_tr[2];
@@ -615,10 +626,14 @@ void fwt3_cpu(struct wavelet_plan_s* plan, data_t* coeff, data_t* inImage)
 	// Final LxLyLz
 	memcpy(coeff, inImage, plan->waveSizes_tr[0]*plan->waveSizes_tr[1]*plan->waveSizes_tr[2]*sizeof(data_t));
 	circunshift(plan,origInImage);
+
+    POP("fwt3");
 }
 
 void iwt3_cpu(struct wavelet_plan_s* plan, data_t* outImage, const data_t* coeff)
 {
+    PUSH("iwt3");
+
 	// Workspace dimensions
 	int dxWork = plan->waveSizes_tr[0 + 3*plan->numLevels_tr]*2-1 + plan->filterLen-1;
 	int dyWork = plan->waveSizes_tr[1 + 3*plan->numLevels_tr]*2-1 + plan->filterLen-1;
@@ -707,6 +722,8 @@ void iwt3_cpu(struct wavelet_plan_s* plan, data_t* outImage, const data_t* coeff
 		HxLyLz += 7*blockSize;
 	}
 	circunshift(plan,outImage);
+
+    POP("iwt3");
 }
 
 void wavthresh3_cpu(struct wavelet_plan_s* plan, data_t* outImage, data_t* inImage, scalar_t thresh)
@@ -722,6 +739,8 @@ void wavthresh3_cpu(struct wavelet_plan_s* plan, data_t* outImage, data_t* inIma
 
 void softthresh_cpu(struct wavelet_plan_s* plan, data_t* coeff, scalar_t thresh)
 {
+    PUSH("softthresh");
+
 	int numMax = plan->numCoeff_tr;
 	int i;
 #pragma omp parallel for
@@ -732,6 +751,8 @@ void softthresh_cpu(struct wavelet_plan_s* plan, data_t* coeff, scalar_t thresh)
 		scalar_t red = norm - thresh;
 		coeff[i] = (red > 0.) ? ((red / norm) * (coeff[i])) : 0.;
 	}
+
+    POP("softthresh");
 }
 
 
