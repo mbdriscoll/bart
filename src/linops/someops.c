@@ -702,9 +702,7 @@ static void fft_linop_apply(const linop_data_t* _data, complex float* out, const
 	}
     POP("fftmod");
 
-    PUSH("fft");
 	operator_apply(data->frw, data->N, data->dims, out, data->N, data->dims, out);
-    POP("fft");
 
 	// fftmodk
     PUSH("fftmod");
@@ -843,7 +841,7 @@ static struct linop_s* linop_fft_create_priv(int N, const long dims[N], unsigned
 	lop_fun_t apply = forward ? fft_linop_apply : fft_linop_adjoint;
 	lop_fun_t adjoint = forward ? fft_linop_adjoint : fft_linop_apply;
 
-	return linop_create(N, dims, N, dims, &PTR_PASS(data)->base, apply, adjoint, fft_linop_normal, NULL, fft_linop_free, "fft");
+	return linop_create(N, dims, N, dims, &PTR_PASS(data)->base, apply, adjoint, fft_linop_normal, NULL, fft_linop_free, "FFT");
 }
 
 

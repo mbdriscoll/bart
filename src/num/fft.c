@@ -29,6 +29,7 @@
 
 #include "misc/misc.h"
 #include "misc/debug.h"
+#include "misc/profile.h"
 
 #include "fft.h"
 #undef fft_plan_s
@@ -296,7 +297,7 @@ const struct operator_s* fft_create2(unsigned int D, const long dimensions[D], u
 		plan->cuplan = fft_cuda_plan(D, dimensions, flags, ostrides, istrides, backwards);
 #endif
 
-	return operator_create2(D, dimensions, ostrides, D, dimensions, istrides, &PTR_PASS(plan)->base, fft_apply, fft_free_plan, "fft");
+	return operator_create2(D, dimensions, ostrides, D, dimensions, istrides, &PTR_PASS(plan)->base, fft_apply, fft_free_plan, backwards ? "ifft" : "fft");
 }
 
 const struct operator_s* fft_create(unsigned int D, const long dimensions[D], unsigned long flags, complex float* dst, const complex float* src, bool backwards)
