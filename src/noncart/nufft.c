@@ -18,6 +18,7 @@
 
 #include "misc/misc.h"
 #include "misc/debug.h"
+#include "misc/profile.h"
 
 #include "num/multind.h"
 #include "num/flpmath.h"

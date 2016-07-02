@@ -33,6 +33,7 @@
 
 #include "misc/misc.h"
 #include "misc/debug.h"
+#include "misc/profile.h"
 
 #include "num/optimize.h"
 #ifdef USE_CUDA
@@ -475,6 +476,8 @@ static void nary_clear(void* _data, void* ptr[])
  */
 void md_clear2(unsigned int D, const long dim[D], const long str[D], void* ptr, size_t size)
 {
+    PUSH("clear");
+
 	int skip = md_calc_blockdim(D, dim, str, size);
 
 //	printf("CLEAR skip %d\n", skip);
@@ -485,6 +488,8 @@ void md_clear2(unsigned int D, const long dim[D], const long str[D], void* ptr, 
 #endif
 
 	md_nary(1, D - skip, dim + skip, (const long*[1]){ str + skip }, (void*[1]){ ptr }, &data, &nary_clear);
+
+    POP("clear");
 }
 
 
