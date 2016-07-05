@@ -241,6 +241,8 @@ static void grid2_dims(unsigned int D, const long trj_dims[D], const long ksp_di
 
 void grid2(float os, float width, double beta, unsigned int D, const long trj_dims[D], const complex float* traj, const long grid_dims[D], complex float* dst, const long ksp_dims[D], const complex float* src)
 {
+    PUSH("grid2");
+
 	grid2_dims(D, trj_dims, ksp_dims, grid_dims);
 
 	long ksp_strs[D];
@@ -264,11 +266,15 @@ void grid2(float os, float width, double beta, unsigned int D, const long trj_di
 			ksp_dims, &MD_ACCESS(D, ksp_strs, pos, src));
 
 	} while(md_next(D, ksp_dims, (~0 ^ 15), pos));
+
+    POP("grid2");
 }
 
 
 void grid2H(float os, float width, double beta, unsigned int D, const long trj_dims[D], const complex float* traj, const long ksp_dims[D], complex float* dst, const long grid_dims[D], const complex float* src)
 {
+    PUSH("grid2H");
+
 	grid2_dims(D, trj_dims, ksp_dims, grid_dims);
 
 	long ksp_strs[D];
@@ -290,6 +296,8 @@ void grid2H(float os, float width, double beta, unsigned int D, const long trj_d
 			grid_dims, &MD_ACCESS(D, grid_strs, pos, src));
 
 	} while(md_next(D, ksp_dims, (~0 ^ 15), pos));
+
+    POP("grid2H");
 }
 
 

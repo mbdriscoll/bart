@@ -39,6 +39,7 @@
 
 #include "misc/misc.h"
 #include "misc/debug.h"
+#include "misc/profile.h"
 
 // automatic parallelization
 extern bool num_auto_parallelize;
@@ -651,7 +652,9 @@ static void make_z2opf_from_real(size_t offset, unsigned int D, const long dims[
  */
 void md_zmul2(unsigned int D, const long dim[D], const long ostr[D], complex float* optr, const long istr1[D], const complex float* iptr1, const long istr2[D], const complex float* iptr2)
 {
+    PUSH("zmul");
 	MAKE_Z3OP(zmul, D, dim, ostr, optr, istr1, iptr1, istr2, iptr2);
+    POP("zmul");
 }
 
 
@@ -675,7 +678,9 @@ void md_zmul(unsigned int D, const long dim[D], complex float* optr, const compl
  */
 void md_mul2(unsigned int D, const long dim[D], const long ostr[D], float* optr, const long istr1[D], const float* iptr1, const long istr2[D], const float* iptr2)
 {
+    PUSH("mul");
 	MAKE_3OP(mul, D, dim, ostr, optr, istr1, iptr1, istr2, iptr2);
+    POP("mul");
 }
 
 
@@ -701,7 +706,9 @@ void md_mul(unsigned int D, const long dims[D], float* optr, const float* iptr1,
  */
 void md_zrmul2(unsigned int D, const long dim[D], const long ostr[D], complex float* optr, const long istr1[D], const complex float* iptr1, const long istr2[D], const complex float* iptr2)
 {
+    PUSH("zrmul");
 	MAKE_Z3OP_FROM_REAL(mul, D, dim, ostr, optr, istr1, iptr1, istr2, iptr2);
+    POP("zrmul");
 }
 
 
@@ -727,6 +734,7 @@ void md_zrmul(unsigned int D, const long dim[D], complex float* optr, const comp
  */
 void md_zsmul2(unsigned int D, const long dims[D], const long ostr[D], complex float* optr, const long istr[D], const complex float* iptr, complex float val)
 {
+    PUSH("zsmul");
 	if (0. == cimagf(val)) { // strength reduction: complex to real multiplication
 
 		long dimsR[D + 1];
@@ -742,6 +750,7 @@ void md_zsmul2(unsigned int D, const long dims[D], const long ostr[D], complex f
 	}
 
 	make_z3op_scalar(md_zmul2, D, dims, ostr, optr, istr, iptr, val);
+    POP("zsmul");
 }
 
 
@@ -823,7 +832,9 @@ void md_smul(unsigned int D, const long dims[D], float* optr, const float* iptr,
  */
 void md_zmulc2(unsigned int D, const long dim[D], const long ostr[D], complex float* optr, const long istr1[D], const complex float* iptr1, const long istr2[D], const complex float* iptr2)
 {
+    PUSH("zmulc");
 	MAKE_Z3OP(zmulc, D, dim, ostr, optr, istr1, iptr1, istr2, iptr2);
+    POP("zmulc");
 }
 
 
@@ -847,7 +858,9 @@ void md_zmulc(unsigned int D, const long dims[D], complex float* optr, const com
  */
 void md_zdiv2(unsigned int D, const long dim[D], const long ostr[D], complex float* optr, const long istr1[D], const complex float* iptr1, const long istr2[D], const complex float* iptr2)
 {
+    PUSH("zdiv");
 	MAKE_Z3OP(zdiv, D, dim, ostr, optr, istr1, iptr1, istr2, iptr2);
+    POP("zdiv");
 }
 
 
@@ -899,7 +912,9 @@ void md_zpow2(unsigned int D, const long dims[D], const long ostr[D], complex fl
 	// FIXME: something is broken with the cuda implementation of zpow
 	assert(!(cuda_ondevice(optr) || cuda_ondevice(iptr1) || cuda_ondevice(iptr2)));
 #endif
+    PUSH("zpow");
 	MAKE_Z3OP(zpow, D, dims, ostr, optr, istr1, iptr1, istr2, iptr2);
+    POP("zpow");
 }
 
 
@@ -971,7 +986,9 @@ void md_sqrt(unsigned int D, const long dims[D], float* optr, const float* iptr)
  */
 void md_zsqrt2(unsigned int D, const long dims[D], const long ostrs[D], complex float* optr, const long istrs[D], const complex float* iptr)
 {
+    PUSH("zsqrt");
 	md_zspow2(D, dims, ostrs, optr, istrs, iptr, 0.5);
+    POP("zsqrt");
 }
 
 
@@ -1206,7 +1223,9 @@ void md_zmatmul(unsigned int D, const long out_dims[D], complex float* dst, cons
  */
 void md_zfmac2(unsigned int D, const long dims[D], const long ostr[D], complex float* optr, const long istr1[D], const complex float* iptr1, const long istr2[D], const complex float* iptr2)
 {
+    PUSH("zfmac");
 	MAKE_Z3OP(zfmac, D, dims, ostr, optr, istr1, iptr1, istr2, iptr2);
+    POP("zfmac");
 }
 
 
@@ -1254,7 +1273,9 @@ void md_zfmacD(unsigned int D, const long dims[D], complex double* optr, const c
  */
 void md_fmac2(unsigned int D, const long dims[D], const long ostr[D], float* optr, const long istr1[D], const float* iptr1, const long istr2[D], const float* iptr2)
 {
+    PUSH("fmac");
 	MAKE_3OP(fmac, D, dims, ostr, optr, istr1, iptr1, istr2, iptr2);
+    POP("fmac");
 }
 
 
@@ -1302,7 +1323,9 @@ void md_fmacD(unsigned int D, const long dims[D], double* optr, const float* ipt
  */
 void md_zfmacc2(unsigned int D, const long dims[D], const long ostr[D], complex float* optr, const long istr1[D], const complex float* iptr1, const long istr2[D], const complex float* iptr2)
 {
+    PUSH("zfmacc");
 	MAKE_Z3OP(zfmacc, D, dims, ostr, optr, istr1, iptr1, istr2, iptr2);
+    POP("zfmacc");
 }
 
 
@@ -1508,7 +1531,9 @@ void md_zadd2(unsigned int D, const long dims[D], const long ostr[D], complex fl
  */
 void md_zadd(unsigned int D, const long dims[D], complex float* optr, const complex float* iptr1, const complex float* iptr2)
 {
+    PUSH("zadd");
 	make_z3op_simple(md_zadd2, D, dims, optr, iptr1, iptr2);
+    POP("zadd");
 }
 
 
@@ -2886,7 +2911,9 @@ static void md_zfdiff_core2(unsigned int D, const long dims[D], unsigned int d, 
  */
 void md_zfdiff2(unsigned int D, const long dims[D], unsigned int d, const long ostr[D], complex float* out, const long istr[D], const complex float* in)
 {
+    PUSH("zfdiff");
 	md_zfdiff_core2(D, dims, d, true, ostr, out, istr, in);
+    POP("zfdiff");
 }
 
 
@@ -2897,7 +2924,9 @@ void md_zfdiff2(unsigned int D, const long dims[D], unsigned int d, const long o
  */
 void md_zfdiff_backwards2(unsigned int D, const long dims[D], unsigned int d, const long ostr[D], complex float* out, const long istr[D], const complex float* in)
 {
+    PUSH("zdiff_adj");
 	md_zfdiff_core2(D, dims, d, false, ostr, out, istr, in);
+    POP("zdiff_adj");
 }
 
 
