@@ -281,7 +281,8 @@ void admm(struct admm_history_s* history, const struct admm_plan_s* plan,
 
 			if (eps > 0.) {
 
-			  conjgrad_hist_prealloc(&cghistory, plan->maxitercg, 0., 1.E-3 * eps, N, &ndata, cgdata, vops, admm_normaleq, x, rhs, plan->image_truth, obj_eval_data, obj_eval);
+                // XXX: force max # cg iterations
+			  conjgrad_hist_prealloc(&cghistory, plan->maxitercg, 0., 1.E-3 * eps * 0.0, N, &ndata, cgdata, vops, admm_normaleq, x, rhs, plan->image_truth, obj_eval_data, obj_eval);
 			  //conjgrad_hist(&cghistory, plan->maxitercg, 0., 1.E-3 * eps, N, &ndata, vops, admm_normaleq, x, rhs, plan->image_truth, obj_eval_data, obj_eval);
 
 			} else {
